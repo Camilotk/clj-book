@@ -1,51 +1,176 @@
-<html>
+<!DOCTYPE html>
+<html lang="pt">
   <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aprenda Clojure</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.4/codemirror.min.css">
     <script src="https://cdn.jsdelivr.net/npm/scittle@0.6.17/dist/scittle.js" type="application/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.4/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.4/mode/clojure/clojure.min.js"></script>
     <script type="application/x-scittle">
       (defn run-clojure [] 
-        (let [code         (.-value (.getElementById js/document "clj-input"))
+        (let [code         (js/window.editor.getValue)
+              ;;code       (.-value (.getElementById js/document "clj-input"))
               output-area  (.getElementById js/document "result")]
-          (println "")
+          #_(println code)
           (set! (.-innerText output-area) (js/scittle.core.eval_string code))))
 
       ;; export function to use from JavaScript:
       (set! (.-run_clojure js/window) run-clojure)
     </script>
+    <style>
+      .code-mirror-wrapper {
+        height: 400px; /* Adjust as needed */
+        border-radius: 6px; /* Rounded corners */
+        border: 1px solid #ddd; /* Border similar to Bulma */
+        overflow: hidden;
+      }
+      .code-mirror {
+        height: 100%;
+        border: none;
+        border-radius: 6px; /* Rounded corners */
+      }
+      .button-copy {
+        background-color: #f5f5f5; /* is-light color */
+        border: 1px solid #ddd;
+      }
+      .output-area {
+        height: 400px; /* Adjust to match code editor */
+        overflow: auto;
+        border-radius: 6px; /* Rounded corners */
+        border: 1px solid #ddd; /* Border similar to Bulma */
+        padding: 10px; /* Padding for content */
+        background-color: #f9f9f9; /* Light background color */
+      }
+      .code-mirror-scrollbar {
+        border-radius: 6px; /* Rounded corners for the scrollbar */
+      }
+    </style>
   </head>
   <body>
-    <!-- Main container -->
-  <section class="section">
-    <div class="container">
-      <h1 class="title">Aprenda Clojure</h1>
-      <p class="subtitle">
-        Escreva Clojure diretamente do seu Browser.
-      </p>
-
-      <!-- Code Editor -->
-      <div class="field">
-        <label class="label">Código:</label>
-        <div class="control">
-          <textarea class="textarea" id="clj-input" rows="6" placeholder="(+ 1 2)"></textarea>
-        </div>
+    <!-- Navbar -->
+    <nav class="navbar is-light">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+          Aprenda Clojure
+        </a>
+        <span class="navbar-burger burger" data-target="navbarMenu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
       </div>
 
-      <!-- Run Button -->
-      <div class="field">
-        <div class="control">
-          <button class="button is-primary" onclick="run_clojure()">Executar</button>
+      <div id="navbarMenu" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="#">Home</a>
+          <a class="navbar-item" href="#">Sobre</a>
+          <a class="navbar-item" href="#">Artigos</a>
+        </div>
+        <div class="navbar-end">
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">Idioma</a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item">Português</a>
+              <a class="navbar-item">Inglês</a>
+              <a class="navbar-item">Espanhol</a>
+              <a class="navbar-item">Francês</a>
+              <a class="navbar-item">Alemão</a>
+            </div>
+          </div>
         </div>
       </div>
+    </nav>
 
-      <!-- Result Output -->
-      <div class="field">
-        <label class="label">Resultado:</label>
-        <div class="control">
-          <pre id="result" class="notification is-light"></pre>
+    <!-- Main Content -->
+    <section class="section">
+      <div class="container">
+        <div class="columns">
+          <!-- Text Content -->
+          <div class="column is-two-fifths">
+            <h1 class="title">Aprenda Clojure</h1>
+            <p class="subtitle">
+              Escreva Clojure diretamente do seu Browser.
+            </p>
+            <p class="mb-5">
+              O Clojure é uma linguagem funcional poderosa que funciona na JVM. Experimente o código diretamente aqui e veja o resultado.
+            </p>
+            <figure class="image">
+              <img src="https://via.placeholder.com/600x400" alt="Placeholder Image">
+            </figure>
+          </div>
+
+          <!-- Code Editor -->
+          <div class="column is-three-fifths">
+            <div class="field">
+              <label class="label">Código:</label>
+              <div class="control code-mirror-wrapper">
+                <textarea id="clj-input" class="code-mirror"></textarea>
+              </div>
+            </div>
+
+            <div class="field is-grouped">
+              <div class="control">
+                <button class="button is-primary" id="execute-btn">Executar</button>
+              </div>
+              <div class="control">
+                <button class="button button-copy" id="copy-btn">Copiar</button>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">Resultado:</label>
+              <div class="control output-area">
+                <pre id="result"></pre>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+    
+    <!-- Script to handle the navbar toggle and CodeMirror initialization -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Navbar toggle
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        if ($navbarBurgers.length > 0) {
+          $navbarBurgers.forEach(el => {
+            el.addEventListener('click', () => {
+              const target = el.dataset.target;
+              const $target = document.getElementById(target);
+              el.classList.toggle('is-active');
+              $target.classList.toggle('is-active');
+            });
+          });
+        }
+
+        // CodeMirror setup
+        const editor = CodeMirror.fromTextArea(document.getElementById('clj-input'), {
+          mode: 'clojure',
+          lineNumbers: false, // Removed line numbers
+          scrollbarStyle: 'native',
+          theme: 'default'
+        });
+
+        // Execute button
+        document.getElementById('execute-btn').addEventListener('click', () => {
+          run_clojure();
+        });
+
+        // Copy button
+        document.getElementById('copy-btn').addEventListener('click', () => {
+          const code = editor.getValue();
+          navigator.clipboard.writeText(code).then(() => {
+            alert('Código copiado!');
+          });
+        });
+
+        // Expose editor
+        window.editor = editor;
+      });
+    </script>
   </body>
 </html>
-
