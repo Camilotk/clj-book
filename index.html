@@ -13,16 +13,17 @@
       (defn run-clojure [] 
         (let [code         (js/window.editor.getValue)
               ;;code       (.-value (.getElementById js/document "clj-input"))
+              result (js/scittle.core.eval_string code)
               output-area  (.getElementById js/document "result")]
           #_(println code)
-          (set! (.-innerText output-area) (js/scittle.core.eval_string code))))
+          (set! (.-innerText output-area) result)))
 
       ;; export function to use from JavaScript:
       (set! (.-run_clojure js/window) run-clojure)
     </script>
     <style>
       .code-mirror-wrapper {
-        height: 400px; /* Adjust as needed */
+        height: 250px; /* Adjust as needed */
         border-radius: 6px; /* Rounded corners */
         border: 1px solid #ddd; /* Border similar to Bulma */
         overflow: hidden;
@@ -37,16 +38,25 @@
         border: 1px solid #ddd;
       }
       .output-area {
-        height: 400px; /* Adjust to match code editor */
+        height: 250px; /* Adjust to match code editor */
         overflow: auto;
         border-radius: 6px; /* Rounded corners */
         border: 1px solid #ddd; /* Border similar to Bulma */
         padding: 10px; /* Padding for content */
-        background-color: #f9f9f9; /* Light background color */
+        background-color: #F5F5F5; /* Light background color */
       }
       .code-mirror-scrollbar {
         border-radius: 6px; /* Rounded corners for the scrollbar */
       }
+    .buttons-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between; /* Distribute space between buttons and select */
+    }
+    .select-container {
+      flex: 1;
+      margin: 0 10px; /* Adjust margin as needed */
+    }
     </style>
   </head>
   <body>
@@ -126,9 +136,21 @@
                 <pre id="result"></pre>
               </div>
             </div>
-          </div>
+
+             <div class="buttons-container">
+      <button class="button is-primary">Anterior</button>
+      <div class="select-container">
+        <div class="select is-fullwidth">
+          <select>
+            <option>Intro</option>
+            <option>Aula 1</option>
+            <option>Aula 2</option>
+          </select>
         </div>
       </div>
+      <button class="button is-primary">Próxima</button>
+    </div>
+
     </section>
     
     <!-- Script to handle the navbar toggle and CodeMirror initialization -->
