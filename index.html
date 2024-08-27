@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/scittle@0.6.17/dist/scittle.js" type="application/javascript"></script>
+    <script type="application/x-scittle">
+      (defn run-clojure [] 
+        (let [code         (.-value (.getElementById js/document "clj-input"))
+              output-area  (.getElementById js/document "result")]
+          (println "")
+          (set! (.-innerText output-area) (js/scittle.core.eval_string code))))
+
+      ;; export function to use from JavaScript:
+      (set! (.-run_clojure js/window) run-clojure)
+    </script>
+  </head>
+  <body>
+    <!-- Main container -->
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Aprenda Clojure</h1>
+      <p class="subtitle">
+        Escreva Clojure diretamente do seu Browser.
+      </p>
+
+      <!-- Code Editor -->
+      <div class="field">
+        <label class="label">Código:</label>
+        <div class="control">
+          <textarea class="textarea" id="clj-input" rows="6" placeholder="(+ 1 2)"></textarea>
+        </div>
+      </div>
+
+      <!-- Run Button -->
+      <div class="field">
+        <div class="control">
+          <button class="button is-primary" onclick="run_clojure()">Executar</button>
+        </div>
+      </div>
+
+      <!-- Result Output -->
+      <div class="field">
+        <label class="label">Resultado:</label>
+        <div class="control">
+          <pre id="result" class="notification is-light"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+  </body>
+</html>
+
